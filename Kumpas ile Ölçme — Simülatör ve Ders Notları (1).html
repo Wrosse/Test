@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kumpas ile Ölçme — Simülatör ve Ders Notları</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@600;700&family=Libre+Franklin:wght@400;500;700&display=swap">
+<style>
+:root{--bg:#f3f1ec;--card:#fff;--ink:#17233b;--mut:#586377;--navy:#12203d;--gold:#a67c1f;--red:#c0392b;--blue:#1f5fbf;--line:#d6d9e0;--sb:#e9eef7;--vb:#f8ecd0;--ok:#1d7a4a;--bad:#b3261e;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1424;--card:#16203a;--ink:#e8ecf5;--mut:#a3adc2;--navy:#0a1226;--gold:#e0b552;--red:#ff6b5b;--blue:#6fa2ff;--line:#2c3856;--sb:#1f2c4a;--vb:#3a3220;--ok:#5fd394;--bad:#ff8a80;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d1424;--card:#16203a;--ink:#e8ecf5;--mut:#a3adc2;--navy:#0a1226;--gold:#e0b552;--red:#ff6b5b;--blue:#6fa2ff;--line:#2c3856;--sb:#1f2c4a;--vb:#3a3220;--ok:#5fd394;--bad:#ff8a80;color-scheme:dark}
+html{height:100%;scroll-padding-top:calc(env(safe-area-inset-top,0px) + 56px);scroll-behavior:smooth}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 "Libre Franklin",system-ui,sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--navy);z-index:10}
+h1,h2,h3{font-family:"Source Serif 4",Georgia,serif;line-height:1.25;margin:0 0 .5em}
+.top{position:sticky;top:env(safe-area-inset-top,0px);background:var(--navy);color:#fff;z-index:20;border-bottom:3px solid var(--gold)}
+.top div{max-width:1000px;margin:auto;padding:10px 16px;display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.top b{font-family:"Source Serif 4",Georgia,serif;font-size:18px;margin-right:auto}
+.top a{color:#dfe5f3;text-decoration:none;font-size:14px}.top a:hover{color:#fff;text-decoration:underline}
+main{max-width:1000px;margin:auto;padding:20px 16px 60px}
+section{margin-top:34px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:18px}
+.lead{color:var(--mut);max-width:64ch}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:10px 0}
+select,input[type=text],input[type=number]{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:var(--card);color:var(--ink)}
+button{font:inherit;font-weight:500;padding:8px 14px;border:1px solid var(--navy);background:var(--navy);color:#fff;border-radius:4px;cursor:pointer}
+button.alt{background:transparent;color:var(--ink);border-color:var(--line)}
+button:hover{filter:brightness(1.2)}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+input[type=range]{width:100%;accent-color:var(--gold)}
+svg{display:block;width:100%;height:auto}
+.zoom{border:1px solid var(--line);border-radius:4px;overflow:hidden;touch-action:pan-y;cursor:ew-resize}
+#ov{touch-action:none;cursor:ew-resize}
+.mb{fill:var(--sb);stroke:var(--ink);stroke-width:1.2}.vb{fill:var(--vb);stroke:var(--ink);stroke-width:1.2}
+.tk{stroke:var(--ink);stroke-width:1.2}.lb{fill:var(--ink);font:12px sans-serif;text-anchor:middle}
+.hl{stroke:var(--red);stroke-width:3}.z{stroke:var(--blue);stroke-width:3}
+.jaw{fill:#8d97ab;stroke:var(--ink)}.beam{fill:var(--sb);stroke:var(--ink)}.slide{fill:var(--vb);stroke:var(--ink)}.part{fill:var(--gold);opacity:.85}
+.big{font:700 34px "Source Serif 4",Georgia,serif;color:var(--gold)}
+.res{display:grid;grid-template-columns:auto 1fr;gap:6px 20px;align-items:center}
+.bx{background:var(--bg);border-left:4px solid var(--gold);padding:10px 14px;border-radius:3px;margin:10px 0}
+.ok{color:var(--ok);font-weight:700}.bad{color:var(--bad);font-weight:700}
+table{border-collapse:collapse;width:100%;margin:10px 0;font-size:15px}
+th{background:var(--navy);color:#fff;text-align:left}th,td{padding:7px 10px;border:1px solid var(--line)}
+.sc{overflow-x:auto}
+details{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:10px 0}
+summary{padding:14px 18px;cursor:pointer;font:600 18px "Source Serif 4",Georgia,serif}
+details>div{padding:0 18px 14px}
+.hero{background:var(--navy);color:#fff;border-radius:6px;padding:22px;border-left:6px solid var(--gold)}
+.hero h1{font-size:clamp(24px,4vw,36px);margin:0 0 6px}.hero p{margin:0;color:#cdd5e6}
+code{background:var(--bg);padding:1px 6px;border-radius:3px}
+li{margin:3px 0}
+footer{text-align:center;color:var(--mut);font-size:13px;padding:20px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<nav class="top"><div><b>Kumpas ile Ölçme</b><a href="#simulator">Simülatör</a><a href="#oyun">Oyun</a><a href="#ders">Ders notları</a><a href="#tablolar">Çizelgeler</a></div></nav>
+<main>
+<div class="hero"><h1>Kumpas Simülatörü ve Ders Notları</h1><p>Sürgüyü çek, ölçüyü gör, sonra kendini oyunla sına. Otomotiv Teknolojisi · Ölçme dersi.</p></div>
+
+<section id="simulator">
+<h2>Kumpas simülatörü</h2>
+<p class="lead">Aşağıdaki kumpasta sürgüyü fareyle ya da parmakla sağa sola sürükle. Alttaki büyütülmüş görüntüde ana cetvel ile sürgü çizgilerini görürsün. Cetvelle tam çakışan sürgü çizgisi <b style="color:var(--red)">kırmızı</b> görünür.</p>
+<div class="card">
+<div class="row"><label for="st">Kumpas tipi:</label><select id="st"></select><span id="hs" style="color:var(--mut)"></span></div>
+<svg id="ov" viewBox="0 0 900 256" role="img" aria-label="Kumpas genel görünüm"></svg>
+<div class="row" style="margin-bottom:0"><button class="alt" data-s="-W" aria-label="Bir tam birim geri">« tam</button><button class="alt" data-s="-1">‹ ince</button><input id="rg" type="range" min="0" value="0" step="1" aria-label="Kumpas açıklığı" style="flex:1;min-width:140px"><button class="alt" data-s="1">ince ›</button><button class="alt" data-s="W">tam »</button></div>
+<p style="margin:12px 0 4px;color:var(--mut);font-size:14px">Yukarıdaki kumpasta kırmızı kesikli kutunun büyütülmüş hali (üstte ana cetvel, altta sürgü). Üzerinde sürükleyerek ince ayar yapabilirsin.</p>
+<div class="zoom"><svg id="zs" viewBox="0 0 900 192" role="img" aria-label="Büyütülmüş cetvel ve sürgü"></svg></div>
+<div class="bx" id="res"></div>
+</div>
+</section>
+
+<section id="oyun">
+<h2>Oyun: Bu kaç ölçüyor?</h2>
+<p class="lead">Rastgele bir ölçü gösterilir. Tam kısmı, sonra çakışan çizgiyi bul, ölçüyü yaz. Milimetre kumpaslarda sonucu mm olarak, inç kumpaslarda inç olarak yaz (<code>0,133</code> ya da <code>15/64</code> ya da <code>2/16 + 6/128</code> kabul edilir).</p>
+<div class="card">
+<div class="row"><label for="gt">Kumpas tipi:</label><select id="gt"></select><span id="gu" style="color:var(--mut)"></span><span style="margin-left:auto" id="sc"></span></div>
+<div class="zoom" style="cursor:default"><svg id="gs" viewBox="0 0 900 192" role="img" aria-label="Soru kumpası"></svg></div>
+<div class="row"><input id="ans" type="text" inputmode="text" autocomplete="off" placeholder="Okuduğun ölçü" aria-label="Cevap" style="flex:1;min-width:150px"><button id="ck">Kontrol et</button><button class="alt" id="hn">İpucu</button><button class="alt" id="nx">Yeni soru</button></div>
+<div id="fb" aria-live="polite"></div>
+</div>
+</section>
+
+<section id="ders">
+<h2>Ders notları</h2>
+<p class="lead">Defter notlarından hazırlandı; konuyu hiç bilmeyen biri sırayla okuyunca anlayabilsin diye açıklandı.</p>
+
+<details open><summary>1. Ölçme nedir?</summary><div>
+<p><b>Ölçme</b>, uzunluğu bilinen bir şeyle (cetvel, kumpas gibi), uzunluğu bilinmeyen aynı cinsten bir şeyi karşılaştırmaktır. Bir cıvatanın boyunu cetvele bakarak söylediğinde aslında ölçme yaparsın.</p>
+<ul><li><b>Direkt (doğrudan) ölçüm:</b> Değeri aletten doğrudan okursun. Örnek: kumpasla mil çapı.</li>
+<li><b>Endirekt (dolaylı) ölçüm:</b> Değeri başka ölçümlerden hesaplarsın. Örnek: kenarları ölçüp alan bulmak.</li></ul>
+<p><b>Birimler:</b> Temel birimler uzunluk, zaman gibi bağımsız büyüklüklerdir. Türetilmiş birimler bunlardan çıkar: sürat, pascal (basınç), radyan (açı).</p>
+<p><b>İki ölçü sistemi vardır:</b> Metrik sistem (mm, cm, m) ve inç (parmak) sistemi. <b>1 inç = 25,4 mm.</b> Standart ölçülere geçmemizin nedeni, her ülkede ve fabrikada üretilen parçaların birbirine uymasıdır (değiştirilebilirlik).</p>
+<h3>Ölçü aletlerinin sınıfları</h3>
+<table><tr><th>Sınıf</th><th>Örnek</th></tr><tr><td>Basit (bölüntüsüz) aletler</td><td>pergel, gönye</td></tr><tr><td>Çizgi bölüntülü aletler</td><td>çelik cetvel, şerit metre</td></tr><tr><td>Hassas bölüntülü aletler (0,1 mm – 0,001 mm)</td><td>kumpas, mikrometre</td></tr></table>
+</div></details>
+
+<details><summary>2. Birim dönüştürme</summary><div>
+<p>Metrik sistemde her basamak 10 kat fark eder: <code>mm → cm → dm → m → dam → hm → km</code>. Üst birime çıkarken <b>10’a böl</b>, alt birime inerken <b>10 ile çarp</b>.</p>
+<ul><li>7,6 mm = 0,76 cm = 0,0076 m</li><li>326 mm = 0,326 m</li><li>2,54 m = 2540 mm</li><li>1 inç = 25,4 mm</li></ul>
+<div class="row"><label>inç <input id="ci" type="number" step="any" style="width:110px"></label> = <label><input id="cm" type="number" step="any" style="width:110px"> mm</label><span style="color:var(--mut);font-size:14px">(birini yaz, diğeri hesaplanır)</span></div>
+</div></details>
+
+<details><summary>3. Kumpasın parçaları</summary><div>
+<ul><li><b>Sabit çene ve hareketli çene (dış ölçü):</b> Parçanın dış çapı, kalınlığı, genişliği için.</li>
+<li><b>İç ölçü çeneleri (üst uçlar):</b> Delik veya yuvanın iç çapı için. Çeneler içeriden açılır.</li>
+<li><b>Derinlik çubuğu:</b> Cetvelin ucundan çıkar; delik ve kademe derinliğini ölçer.</li>
+<li><b>Cetvel (ana skala):</b> Sabit, üzerinde mm (ya da inç) çizgileri vardır.</li>
+<li><b>Sürgü (verniyer skalası):</b> Hareketli parça; küçük hassas bölüntüler burada.</li>
+<li><b>Kilit vidası:</b> Ölçüyü sabitler, böylece parçayı çıkarıp rahatça okuyabilirsin.</li></ul>
+</div></details>
+
+<details><summary>4. Verniyer prensibi: neden çakışan çizgiye bakıyoruz?</summary><div>
+<p>Cetvelde en küçük çizgi aralığı 1 mm’dir; gözle mm’nin altını okuyamazsın. Verniyer bunu çözer: sürgüdeki çizgiler cetvelinkinden <b>biraz daha sık</b> yapılmıştır.</p>
+<div class="bx"><b>1/10 verniyer:</b> Cetveldeki 9 mm’lik uzunluk sürgüde 10 eşit parçaya bölünür. Sürgüde bir parça 9 ÷ 10 = 0,9 mm olur. Cetvel çizgisi ile sürgü çizgisi arasındaki fark 1 − 0,9 = <b>0,1 mm</b>’dir. Bu fark kumpasın <b>hassasiyetidir</b>.</div>
+<p>Sürgüyü 0,1 mm kaydırırsan 1. çizgi cetvelle çakışır, 0,2 mm kaydırırsan 2. çizgi çakışır, böyle devam eder. Yani <b>kaçıncı çizgi çakışıyorsa</b> o sayı kadar hassasiyet fazladan ölçmüşsün demektir.</p>
+<div class="bx"><b>Genel kural:</b> Hassasiyet = cetvelin en küçük bölüntüsü ÷ sürgüdeki bölüntü sayısı.<br>1 mm ÷ 10 = 0,1 · 1 mm ÷ 20 = 0,05 · 1 mm ÷ 50 = 0,02 · 1 mm ÷ 100 = 0,01 mm</div>
+</div></details>
+
+<details><summary>5. Milimetre kumpas nasıl okunur? (6 adım)</summary><div>
+<ol><li><b>Sıfır kontrolü:</b> Çeneler kapalıyken sürgü 0’ı cetvel 0’ı ile çakışmalı. Çakışmıyorsa sıfır hatası vardır.</li>
+<li><b>Parçayı yerleştir:</b> Çenelere tam oturt, hafifçe sık, zorlama. İstersen kilit vidasıyla sabitle.</li>
+<li><b>Tam mm’yi oku:</b> Sürgü 0’ının <i>hemen solundaki</i> cetvel çizgisine bak.</li>
+<li><b>Çakışan çizgiyi bul:</b> Sürgüde cetvelle tam hizalanan çizginin numarasını söyle.</li>
+<li><b>Hassasiyetle çarp:</b> Çakışan çizgi × hassasiyet.</li>
+<li><b>Topla:</b> Tam mm + çakışan kısım = ölçü.</li></ol>
+<div class="bx"><b>Örnek (1/10):</b> 0’ın solunda 30 mm, 7. çizgi çakışıyor → 30 + 7 × 0,1 = <b>30,7 mm</b>.<br><b>Örnek (1/20):</b> 30 mm, 14. çizgi → 30 + 14 × 0,05 = <b>30,70 mm</b>.<br><b>Örnek (1/50):</b> 12 mm, 18. çizgi → 12 + 18 × 0,02 = <b>12,36 mm</b>.</div>
+<p><b>Sonuç = tam mm + çakışan × hassasiyet.</b> Kumpas tipi değişse de adımlar aynıdır, sadece hassasiyet değişir.</p>
+<p>Hangi çeneyle ne ölçülür? Dış çap/kalınlık: alt (dış) çeneler. İç çap: üst (iç) çeneler. Derinlik: cetvel ucundaki derinlik çubuğu. Okuma hepsinde aynıdır.</p>
+</div></details>
+
+<details><summary>6. İnç kumpaslar (1/64, 1/128, 1/1000)</summary><div>
+<p>Metrik ve inç bölüntüsü aynı kumpasta olabilir. İnç kumpaslarda cetvel 1/16 inç aralıklıdır (1/1000’de 1/40 inç), sonuç ise <b>kesirle</b> yazılır.</p>
+<div class="bx"><b>1/64 inç:</b> Cetveldeki 3/16 inç sürgüde 4 parçaya bölünür; bir parça 3/64 inç. Fark 1/16 − 3/64 = <b>1/64 inç</b>.<br>Okuma: <code>x/16 + y/64</code> (x: cetvelde sayılan çizgi, y: çakışan sürgü çizgisi).<br>Örnek: 15/64 = 3/16 + 3/64.</div>
+<div class="bx"><b>1/128 inç:</b> Cetveldeki 7/16 inç sürgüde 8 parçaya bölünür; bir parça 7/128. Fark 1/16 − 7/128 = <b>1/128 inç</b>.<br>Okuma: <code>x/16 + y/128</code>. Örnek: 22/128 = 2/16 + 6/128 (çünkü 22 = 8·2 + 6).</div>
+<div class="bx"><b>1/1000 inç:</b> Cetvelde 1 inç 40 parçaya bölünür; her çizgi 1/40 = 0,025 inç. Cetveldeki 49/40 inç sürgüde 25 parçaya bölünür; bir parça 49/1000 inç. Fark 2/40 − 49/1000 = <b>1/1000 inç</b>.<br>Okuma: <code>(25·x + y) / 1000</code>. Örnek: 25·11 + 14 = 289 → <b>0,289 inç</b>.</div>
+<p>İnçi mm’ye çevirmek için 25,4 ile çarp.</p>
+</div></details>
+
+<details><summary>7. Ölçüm hatalarının nedenleri</summary><div>
+<div class="sc"><table><tr><th>Hata</th><th>Sonuç</th><th>Nasıl önlenir?</th></tr>
+<tr><td>Sıfır hatası</td><td>Tüm ölçümler sabit miktar kayar</td><td>Kapalı çenelerle sıfırı kontrol et, farkı hesaba kat</td></tr>
+<tr><td>Paralaks (yandan bakma)</td><td>Yanlış çizgi seçilir</td><td>Skalaya dik bak</td></tr>
+<tr><td>Aşırı sıkma</td><td>Çeneler eğilir, ölçü küçük çıkar</td><td>Hafif ve eşit kuvvet uygula</td></tr>
+<tr><td>Eğik tutma</td><td>Ölçü gerçekten büyük okunur</td><td>Çeneleri parçaya dik ve tam oturt</td></tr>
+<tr><td>Kirli veya çapaklı yüzey</td><td>Çene ile parça arasında boşluk kalır</td><td>Parçayı ve çeneleri temizle</td></tr>
+<tr><td>Sıcaklık farkı</td><td>Parça ve kumpas genleşir</td><td>Parça oda sıcaklığına gelince ölç</td></tr></table></div>
+</div></details>
+
+<details><summary>8. Sınav özeti ve sık yapılan karışıklık</summary><div>
+<ul><li>Verniyer hassasiyetleri: 1/10 → 0,1 mm · 1/20 → 0,05 mm · 1/50 → 0,02 mm · 1/100 → 0,01 mm.</li>
+<li><b>“19/20” ve “49/50” karışmasın:</b> Cetveldeki <b>19 mm</b> sürgüde 20 parçaya bölünürse 1/20 kumpas; cetveldeki <b>49 mm</b> sürgüde 50 parçaya bölünürse 1/50 kumpas olur. Pay (19, 49) cetveldeki uzunluk, payda (20, 50) sürgüdeki parça sayısıdır.</li>
+<li>İç, dış ve özel çap kumpasları ile bölüntüsüz ölçme aletleri de sınav konusudur.</li>
+<li>Oksijen sensörü biri konvertörden önce, diğeri sonra yerleştirilir. Oktan–setan yakıtın tutuşma/yanma kapasitesini gösterir.</li></ul>
+</div></details>
+</section>
+
+<section id="tablolar">
+<h2>Çizelgeler</h2>
+<div class="sc"><table><tr><th>Kumpas</th><th>Cetvelde alınan</th><th>Sürgüdeki parça</th><th>Sürgüde 1 parça</th><th>Hassasiyet</th><th>Okuma</th></tr>
+<tr><td>1/10 mm</td><td>9 mm</td><td>10</td><td>0,9 mm</td><td>0,1 mm</td><td>tam mm + n × 0,1</td></tr>
+<tr><td>1/20 mm</td><td>19 mm</td><td>20</td><td>0,95 mm</td><td>0,05 mm</td><td>tam mm + n × 0,05</td></tr>
+<tr><td>1/50 mm</td><td>49 mm</td><td>50</td><td>0,98 mm</td><td>0,02 mm</td><td>tam mm + n × 0,02</td></tr>
+<tr><td>1/100 mm</td><td>99 mm</td><td>100</td><td>0,99 mm</td><td>0,01 mm</td><td>tam mm + n × 0,01</td></tr>
+<tr><td>1/64 inç</td><td>3/16 inç</td><td>4</td><td>3/64 inç</td><td>1/64 inç</td><td>x/16 + y/64</td></tr>
+<tr><td>1/128 inç</td><td>7/16 inç</td><td>8</td><td>7/128 inç</td><td>1/128 inç</td><td>x/16 + y/128</td></tr>
+<tr><td>1/1000 inç</td><td>49/40 inç</td><td>25</td><td>49/1000 inç</td><td>0,001 inç</td><td>(25x + y)/1000</td></tr></table></div>
+<div class="sc"><table><tr><th>İstenen</th><th>İşlem</th><th>Örnek</th></tr>
+<tr><td>inç → mm</td><td>× 25,4</td><td>0,5 inç = 12,7 mm</td></tr><tr><td>mm → inç</td><td>÷ 25,4</td><td>10 mm = 0,3937 inç</td></tr>
+<tr><td>inç → cm</td><td>× 2,54</td><td>3 inç = 7,62 cm</td></tr><tr><td>feet → mm</td><td>× 304,8</td><td>1 ft = 304,8 mm = 12 inç</td></tr>
+<tr><td>µm → mm</td><td>÷ 1000</td><td>50 µm = 0,05 mm</td></tr></table></div>
+</section>
+</main>
+<footer>Kumpas ile Ölçme · Otomotiv Teknolojisi ders çalışma sitesi</footer>
+
+<script>
+const $=s=>document.querySelector(s),tr=(v,d)=>v.toFixed(d).replace(".",","),gcd=(a,b)=>b?gcd(b,a%b):a;
+const T={
+"10":{l:"1/10 mm",u:"mm",d:1,n:10,m:1,lc:.1,dec:1},
+"20":{l:"1/20 mm",u:"mm",d:1,n:20,m:1,lc:.05,dec:2},
+"50":{l:"1/50 mm",u:"mm",d:1,n:50,m:1,lc:.02,dec:2},
+"100":{l:"1/100 mm",u:"mm",d:1,n:100,m:1,lc:.01,dec:2},
+"64":{l:"1/64 inç",u:"in",d:1/16,n:4,m:1,lc:1/64,dec:4},
+"128":{l:"1/128 inç",u:"in",d:1/16,n:8,m:1,lc:1/128,dec:4},
+"1000":{l:"1/1000 inç",u:"in",d:.025,n:25,m:2,lc:.001,dec:3}};
+for(const id in T){const t=T[id];t.id=id;t.vd=t.m*t.d-t.lc;t.maxN=Math.round((t.u==="mm"?150:6)/t.lc)}
+const sc=t=>760/(t.n*t.vd);
+function lab(t,j){if(t.u==="mm")return j;if(t.id==="1000")return(j*.025).toFixed(3);if(!j)return"0";const g=gcd(j,16);return 16/g===1?j/g+"″":j/g+"/"+16/g}
+function draw(el,t,N,o){
+ const W=900,x0=40,s=sc(t),x=N*t.lc,k=N%t.n;
+ let g=`<rect class="mb" x="0" y="6" width="900" height="92"/><rect class="vb" x="${x0-24}" y="102" width="${t.n*t.vd*s+48}" height="86" rx="3"/>`;
+ let lk=100;for(const c of[1,2,5,10,20,50,100])if(c*t.d*s>=34){lk=c;break}
+ const j0=Math.max(0,Math.floor(x/t.d-x0/(t.d*s))-1),j1=Math.ceil(x/t.d+(W-x0)/(t.d*s));
+ for(let j=j0;j<=j1;j++){const p=x0+(j*t.d-x)*s;if(p<3||p>W-3)continue;const M=j%lk==0;
+  g+=`<line class="tk" x1="${p}" x2="${p}" y1="98" y2="${M?60:76}"/>`+(M?`<text class="lb" x="${p}" y="52">${lab(t,j)}</text>`:"")}
+ const vk=t.n<=10?1:t.n==100?10:5;
+ g+=`<line class="z" x1="${x0}" x2="${x0}" y1="102" y2="172"/>`;
+ for(let i=0;i<=t.n;i++){const p=x0+i*t.vd*s,M=i%vk==0;
+  g+=`<line class="tk" x1="${p}" x2="${p}" y1="102" y2="${M?136:122}"/>`+(M?`<text class="lb" x="${p}" y="156">${i}</text>`:"")}
+ if(o.hl){const p=x0+k*t.vd*s;g+=`<line class="hl" x1="${p}" x2="${p}" y1="56" y2="140"/>`}
+ el.innerHTML=g}
+function explain(t,N){
+ const w=Math.floor(N/t.n),k=N%t.n,v=N*t.lc,u=t.u==="mm"?" mm":" inç";
+ if(t.u==="mm")return`Tam mm: <b>${w}</b> · Çakışan çizgi: <b>${k}</b><br>${w} + ${k} × ${tr(t.lc,t.dec)} = <b>${tr(v,t.dec)} mm</b>`;
+ const mm=` (≈ ${tr(v*25.4,2)} mm)`;
+ if(t.id==="1000")return`Cetvelde sayılan çizgi x = <b>${w}</b> · Çakışan çizgi y = <b>${k}</b><br>25·${w} + ${k} = ${N} → <b>${tr(v,3)} inç</b>${mm}`;
+ const D=16*t.n,g=gcd(N,D)||D;
+ return`x = <b>${w}</b> (1/16’lık çizgi) · y = <b>${k}</b> (çakışan)<br>${w}/16 + ${k}/${D} = ${N}/${D}${g>1&&N?" = "+N/g+"/"+D/g:""} = <b>${tr(v,4)} inç</b>${mm}`}
+const R={t:"10",N:307};
+function opts(sel){for(const id in T)sel.add(new Option(T[id].l,id))}
+opts($("#st"));opts($("#gt"));
+function setN(n){const t=T[R.t];R.N=Math.max(0,Math.min(t.maxN,Math.round(n)));upd()}
+function ov(t){
+ const S=620,Z=46,k=S/(t.maxN*t.lc),px=Z+R.N/t.maxN*S,bw=Math.max(150,t.n*t.vd*k+50);
+ const st=t.u==="mm"?[5,10]:t.id==="1000"?[20,40]:[8,16],vk=t.n<=10?1:t.n==100?10:5,ink="#1c2433",ff='font-family="sans-serif"';
+ let g=`<defs><linearGradient id="gA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3f5f9"/><stop offset=".6" stop-color="#ccd3de"/><stop offset="1" stop-color="#a7b0be"/></linearGradient><linearGradient id="gB" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9aa4b3"/><stop offset=".45" stop-color="#e9edf3"/><stop offset="1" stop-color="#97a1b0"/></linearGradient><linearGradient id="gC" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9b25a"/><stop offset="1" stop-color="#8a6a1f"/></linearGradient></defs>`;
+ g+=`<rect x="30" y="50" width="850" height="60" rx="3" fill="url(#gA)" stroke="#4b5565"/><rect x="880" y="64" width="18" height="8" fill="url(#gB)" stroke="#4b5565"/>`;
+ for(let j=0;Z+j*t.d*k<=874;j++){const p=Z+j*t.d*k,M=j%st[1]==0,m=j%st[0]==0;g+=`<line x1="${p}" x2="${p}" y1="110" y2="${110-(M?26:m?18:10)}" stroke="${ink}" stroke-width="${M?1.5:.9}"/>`+(M?`<text x="${p}" y="76" font-size="11" fill="${ink}" text-anchor="middle" ${ff}>${t.u==="mm"?j:j/st[1]}</text>`:"")}
+ g+=`<rect x="30" y="8" width="16" height="232" rx="2" fill="url(#gB)" stroke="#4b5565"/>`;
+ if(R.N)g+=`<rect x="${Z}" y="140" width="${px-Z}" height="84" fill="url(#gC)" stroke="#5c4510"/>`+(px-Z>70?`<text x="${(Z+px)/2}" y="188" text-anchor="middle" font-size="14" font-weight="700" fill="#fff" ${ff}>Parça</text>`:"");
+ g+=`<rect x="${px}" y="110" width="${bw}" height="52" rx="4" fill="url(#gA)" stroke="#4b5565"/><rect x="${px}" y="110" width="18" height="130" rx="2" fill="url(#gB)" stroke="#4b5565"/><rect x="${px}" y="30" width="70" height="82" rx="3" fill="url(#gB)" stroke="#4b5565"/><rect x="${px}" y="8" width="16" height="24" rx="2" fill="url(#gB)" stroke="#4b5565"/><circle cx="${px+42}" cy="24" r="9" fill="#6d7788" stroke="#2c3442"/><circle cx="${px+bw*.55}" cy="164" r="13" fill="#6d7788" stroke="#2c3442"/>`;
+ for(let i=0;i<=t.n;i++){const p=px+i*t.vd*k;g+=`<line x1="${p}" x2="${p}" y1="110" y2="${110+(i%vk==0?18:11)}" stroke="${ink}" stroke-width="1"/>`}
+ g+=`<text x="${px+bw/2}" y="152" font-size="11" font-weight="700" fill="${ink}" text-anchor="middle" ${ff}>${t.l}</text>`;
+ g+=`<polygon points="${px-22},110 ${px+60},110 900,256 0,256" fill="#a67c1f" opacity=".18"/><rect x="${px-22}" y="92" width="82" height="62" rx="4" fill="none" stroke="#c0392b" stroke-width="2" stroke-dasharray="5 3"/>`;
+ const lt=(x,y,s)=>`<text class="lb" x="${x}" y="${y}" style="text-anchor:start;fill:var(--mut)">${s}</text>`;
+ if(px>200)g+=lt(54,22,"İç ölçü çeneleri")+lt(54,236,"Dış ölçü çeneleri");
+ if(px<480)g+=lt(560,32,"Cetvel (ana skala)");
+ g+=`<text class="lb" x="450" y="250" style="font-weight:700">▼ Büyütülmüş görünüm</text>`;
+ $("#ov").innerHTML=g}
+function ovOld(t){
+ const px=30+R.N/t.maxN*800;
+ $("#ov").innerHTML=`<rect class="beam" x="18" y="56" width="850" height="26"/>`+(R.N?`<rect class="part" x="30" y="94" width="${px-30}" height="34"/>${px-30>60?`<text class="lb" x="${30+(px-30)/2}" y="116" style="fill:#fff;font-weight:700">Parça</text>`:""}`:"")+
+ `<rect class="jaw" x="18" y="18" width="12" height="116" rx="2"/><rect class="slide" x="${px}" y="46" width="130" height="46" rx="4"/><rect class="jaw" x="${px}" y="18" width="12" height="116" rx="2"/><text class="lb" x="${px+72}" y="74" style="font-weight:700">${t.l}</text>`}
+function upd(){const t=T[R.t];$("#rg").max=t.maxN;$("#rg").value=R.N;draw($("#zs"),t,R.N,{hl:1});ov(t);
+ $("#hs").textContent=`Hassasiyet: ${t.l.startsWith("1/")&&t.u==="mm"?tr(t.lc,t.dec)+" mm":t.l.replace("1/","1/")}`;
+ $("#res").innerHTML=`<div class="res"><div class="big">${tr(R.N*t.lc,t.dec)}${t.u==="mm"?" mm":" inç"}</div><div>${explain(t,R.N)}</div></div>`}
+$("#st").onchange=e=>{const o=T[R.t],t=T[e.target.value];const v=R.N*o.lc;R.t=t.id;setN(o.u===t.u?v/t.lc:(t.u==="mm"?30/t.lc:1/t.lc))};
+$("#rg").oninput=e=>setN(+e.target.value);
+document.querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>{const t=T[R.t],a=b.dataset.s;setN(R.N+(a==="W"?t.n:a==="-W"?-t.n:+a))});
+const ovs=$("#ov");let dr=0;
+const mv=e=>{const r=ovs.getBoundingClientRect();setN(Math.min(1,Math.max(0,((e.clientX-r.left)/r.width*900-46)/620))*T[R.t].maxN)};
+ovs.onpointerdown=e=>{dr=1;ovs.setPointerCapture(e.pointerId);mv(e)};ovs.onpointermove=e=>dr&&mv(e);ovs.onpointerup=()=>dr=0;
+const zs=$("#zs");let zd=null;
+zs.onpointerdown=e=>{zd={x:e.clientX,n:R.N};zs.setPointerCapture(e.pointerId)};
+zs.onpointermove=e=>{if(!zd)return;const t=T[R.t],k=zs.getBoundingClientRect().width/900;setN(zd.n-(e.clientX-zd.x)/k/(sc(t)*t.lc))};
+zs.onpointerup=()=>zd=null;
+document.addEventListener("keydown",e=>{if(e.target.id==="ans"&&e.key==="Enter"){G.done?newQ():chk()}});
+upd();
+
+/* Oyun */
+const G={t:"10",N:0,s:0,q:0,st:0,done:0};
+function newQ(){const t=T[G.t];G.N=1+Math.floor(Math.random()*Math.round((t.u==="mm"?100:4)/t.lc));G.done=0;
+ draw($("#gs"),t,G.N,{});$("#ans").value="";$("#fb").innerHTML="";$("#ck").disabled=false;
+ $("#gu").textContent=t.u==="mm"?"Cevap mm cinsinden":"Cevap inç cinsinden";$("#ans").focus({preventScroll:true})}
+function sco(){$("#sc").innerHTML=`Doğru: <b>${G.s}/${G.q}</b> · Seri: <b>${G.st}</b>`}
+function one(s){s=s.trim();const m=s.match(/^(?:(\d+)\s+)?(\d+)\s*\/\s*(\d+)$/);if(m)return(m[1]?+m[1]:0)+m[2]/m[3];return/^\d+(\.\d+)?$/.test(s)?parseFloat(s):NaN}
+function parse(s){s=s.replace(/,/g,".").replace(/["”″]|inç|inch|mm/gi,"");const p=s.split("+").map(one);return p.some(isNaN)?null:p.reduce((a,b)=>a+b,0)}
+function chk(){const t=T[G.t],v=parse($("#ans").value);
+ if(v===null||$("#ans").value.trim()===""){$("#fb").innerHTML=`<p class="bad">Bir sayı yaz (örnek: 12,3 ya da 15/64).</p>`;return}
+ const ok=Math.abs(v-G.N*t.lc)<t.lc/2-1e-9;G.q++;G.done=1;ok?(G.s++,G.st++):G.st=0;sco();
+ draw($("#gs"),t,G.N,{hl:1});$("#ck").disabled=true;
+ $("#fb").innerHTML=`<p class="${ok?"ok":"bad"}">${ok?"Doğru!":"Yanlış. Doğru cevap: "+tr(G.N*t.lc,t.dec)+(t.u==="mm"?" mm":" inç")}</p><div class="bx">${explain(t,G.N)}</div><p style="color:var(--mut)">Enter ile yeni soruya geç.</p>`}
+$("#ck").onclick=chk;$("#nx").onclick=newQ;
+$("#hn").onclick=()=>{const t=t_=T[G.t];draw($("#gs"),t,G.N,{hl:1});const w=Math.floor(G.N/t.n);
+ $("#fb").innerHTML=`<div class="bx">İpucu: kırmızı çizgi cetvelle çakışan sürgü çizgisidir. Mavi sıfır çizgisinin hemen solundaki cetvel çizgisi tam kısımdır${t.u==="mm"?" ("+w+" mm)":""}. Çakışan çizginin numarasını hassasiyetle çarpıp ekle.</div>`};
+$("#gt").onchange=e=>{G.t=e.target.value;newQ()};
+sco();newQ();
+
+/* Dönüştürücü */
+$("#ci").oninput=e=>{$("#cm").value=e.target.value===""?"":+(e.target.value*25.4).toFixed(4)};
+$("#cm").oninput=e=>{$("#ci").value=e.target.value===""?"":+(e.target.value/25.4).toFixed(5)};
+</script>
+</body>
+</html>
